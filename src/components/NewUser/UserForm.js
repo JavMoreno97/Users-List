@@ -2,11 +2,16 @@ import styles from "./UserForm.module.css";
 import Card from "../UI/Card/Card";
 import Button from "../UI/Button/Button";
 import { useState } from "react";
+import Modal from "../UI/Modal/Modal";
 
 const UserForm = ({onUserAdd}) => {
   const [newUsername, setNewUsername] = useState("");
   const [newAge, setNewAge] = useState("");
+
+  const [errorMessage, setErrorMessage] = useState("")
+
   const [userCount, setUserCount] = useState(0);
+  const [showError, setShowError] = useState(false);
 
   const handleUsernameChange = (e) => { setNewUsername(e.target.value) }
 
@@ -14,6 +19,17 @@ const UserForm = ({onUserAdd}) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if(!newUsername || !newAge){    
+      setErrorMessage("Please enter a valid name and age (non-empty values).")
+      setShowError(true);
+      return false;
+    }
+    else if (newAge < 0){
+      setErrorMessage("Please enter a valid age (> 0).")
+      setShowError(true);
+      return false;
+    }
 
     const userData = {
       id: userCount + 1,
@@ -50,6 +66,7 @@ const UserForm = ({onUserAdd}) => {
           <Button type="submit">Add User</Button>
         </div> 
       </form>
+      {showError && <Modal errorMessage={errorMessage} onClick={ () => setShowError(false) } />}
     </Card>
   );
 };
